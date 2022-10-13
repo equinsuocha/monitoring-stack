@@ -6,6 +6,8 @@
 
 ### Okteto deployment guide
 
+prerequisites: kubectl installed
+
 1. Register an account in www.okteto.com
 2. Install `okteto-cli`: https://www.okteto.com/docs/getting-started/#installing-okteto-cli
 3. Configure `okteto-cli`: https://www.okteto.com/docs/getting-started/#configuring-okteto-cli-with-okteto-cloud
@@ -19,6 +21,8 @@ under following urls:
 - `https://grafana-{{ your namespace name }}.cloud.okteto.net/`
 
 ### Private cluster deployment guide
+
+prerequisites: kubectl installed
 
 1. Add namespace manifest to the resources
 2. Make sure namespace is specified in your `kustomization.yaml`
@@ -44,7 +48,7 @@ All components are deployed in a single instance, because there's a limitation o
 
 ### Train of thought
 
-Since the goal was a bit abstract, I was struggling finding balance between execution time/effort and demonstration smoothness, since many quick solutions would render themselves barely portable and potentially can run into numerous environment issues when reproduced by the other party. So my initial goal was to keep it simple and portable. One of biggest roadblocks I expected to run into is specifically platform integration: how do we authenticate and execute deployment pipeline against the platform of choice. I was looking for smth with direct access to k8s control plain, and as I expected there were not too many free or even trial options (which I still don't want to subscribe to). I that was not the case, I might have required to learn some platfrom-specific APIs to fullfill that request. Luckily, there was one option, so I could cut down prerequisites to pretty much having kubectl installed and kubeconfig present on a machine to execute deployment against k8s cluster.
+Since the goal was a bit abstract, I was struggling finding balance between execution time/effort and demonstration smoothness, since many quick solutions would render themselves barely portable and potentially can run into numerous environment issues when reproduced by the other party. So my initial goal was to keep it simple and portable. One of biggest roadblocks I expected to run into is specifically platform integration: how do we authenticate and execute deployment pipeline against the platform of choice. I was looking for smth with direct access to k8s control plain, and as I expected there were not too many free or even trial options (which I still don't want to subscribe to). If that was not the case, I might have required to learn some platfrom-specific APIs to fullfill that task. Luckily, there was an option, so I could cut down prerequisites to pretty much having kubectl installed and kubeconfig present on a machine to execute deployment against k8s cluster.
 
 Once I got that off my way, I could focus on platform components configuration and wiring.
 The main idea was to bring up a standard LGTM stack (without tracing part since it was not mentioned in task description) and demonstrate main components provisioned and operating. So there was a list of things to do:
