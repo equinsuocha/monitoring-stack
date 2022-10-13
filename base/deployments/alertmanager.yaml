@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+    spec:
+      volumes:
+        - name: alertmanager-config-volume
+          configMap:
+            name: alertmanager-config
+      containers:
+        - name: alertmanager
+          image: prom/alertmanager
+          ports:
+            - containerPort: 9093
+              name: alertmgr-api
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9093
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9093
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          volumeMounts:
+            - name: alertmanager-config-volume
+              mountPath: /etc/alertmanager/
+          resources:
+            requests:
+              cpu: '0.1'
+              memory: 128M
+              ephemeral-storage: '10Mi'
+            limits:
+              cpu: '1'
+              memory: 512M
+              ephemeral-storage: '100Mi'

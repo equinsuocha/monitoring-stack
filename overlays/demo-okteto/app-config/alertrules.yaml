@@ -1,0 +1,43 @@
+groups:
+- name: MonitoringStack
+  rules:
+  - alert: NoGrafanaAgentData
+    expr: absent(agent_build_info)
+    for: '2m'
+    labels:
+      severity: alert
+    annotations:
+      summary: "No data from Grafana Agent"
+
+  - alert: NoMysqlExporterData
+    expr: absent(mysql_up)
+    for: 2m
+    labels:
+      severity: alert
+    annotations:
+      summary: "No data from Mysql Exporter"
+
+  - alert: NoGrafanaData
+    expr: absent(grafana_build_info)
+    for: 2m
+    labels:
+      severity: alert
+    annotations:
+      summary: "No data from Grafana"
+
+  - alert: NoLokiData
+    expr: absent(grafana_build_info)
+    for: 2m
+    labels:
+      severity: alert
+    annotations:
+      summary: "No data from Grafana"
+
+  - alert: PrometheusIsNotDead
+    expr: prometheus_build_info
+    for: 10s
+    labels:
+      severity: info
+    annotations:
+      summary: "Well, your prometheus is at least sending this alert"
+

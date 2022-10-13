@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:  
+      labels:
+        app: prometheus
+    spec:
+      serviceAccount: prometheus
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+          - 0
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.37.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - '--config.file=/etc/prometheus/prometheus.yaml'
+            - '--storage.tsdb.path=/prometheus/'
+            - '--web.enable-lifecycle'
+            - '--storage.tsdb.retention.size=256MB'
+            - '--storage.tsdb.retention.time=1h'
+            - '--log.level=error'
+            - '--web.enable-remote-write-receiver'
+          ports:
+            - containerPort: 9090
+              name: http
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/
+            - name: prometheus-alert-rules-volume
+              readOnly: false
+              mountPath: /etc/alerts/
+            - name: prometheus-data
+              mountPath: /prometheus/
+          resources:
+            requests:
+              memory: '512Mi'
+              cpu: '0.5'
+            limits:
+              memory: '3Gi'
+              cpu: '1'
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '1'
+      volumes:
+        - name: prometheus-data
+          persistentVolumeClaim:
+            claimName: prometheus-pvc
+        - name: prometheus-config-volume
+          configMap:
+            name: prometheus-config
+        - name: prometheus-alert-rules-volume
+          configMap:
+            name: prometheus-alert-rules

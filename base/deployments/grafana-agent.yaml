@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: grafana-agent
+  name: grafana-agent
+spec:
+  selector:
+    matchLabels:
+      app: grafana-agent
+  template:
+    metadata:
+      labels:
+        app: grafana-agent
+    spec:
+      containers:
+      - name: grafana-agent
+        image: grafana/agent:v0.28.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - -config.expand-env
+        - -config.file=/etc/agent/grafana-agent.yaml
+        - -server.http.address=0.0.0.0:9090
+        command:
+        - /bin/agent
+        env:
+        - name: K8S_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: K8S_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MYSQLD_EXPORTER_USER
+          valueFrom:
+            secretKeyRef:
+              name: grafana-db-mysqld-exporter-credentials
+              key: username
+        - name: MYSQLD_EXPORTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: grafana-db-mysqld-exporter-credentials
+              key: password
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 3100
+          name: loki-http
+        - containerPort: 3200
+          protocol: TCP
+          name: syslog
+        volumeMounts:
+          - mountPath: /etc/agent
+            name: grafana-agent-config-volume
+          - mountPath: /var/promtail
+            name: positions-volume
+      volumes:
+        - name: grafana-agent-config-volume
+          configMap:
+            name: grafana-agent-config
+        - name: positions-volume
+          emptyDir: {}

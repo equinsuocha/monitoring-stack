@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager-ui
+  namespace: pipedrive
+spec:
+  type: LoadBalancer
+  selector:
+    app: alertmanager-ui
+  ports:
+    - name: alertmanager-ui
+      port: 8080
+      targetPort: 8080

@@ -1,0 +1,15 @@
+---
+# Source: loki/templates/service-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-agent
+  annotations:
+    dev.okteto.com/auto-ingress: "true"
+spec:
+  ports:
+    - port: 3100
+      name: loki-http
+      targetPort: 3100
+  selector:
+    app: grafana-agent

@@ -1,0 +1,66 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+transformers:
+  - ./transformers/annotations.yaml
+  - ./transformers/annotation-patches.yaml
+resources:
+  - roles/prometheus-k8s-sd.yaml
+  - role-bindings/prometheus.yaml
+  - service-accounts/prometheus.yaml
+  - services/alertmanager.yaml
+  - services/alertmanager-ui.yaml
+  - services/grafana-agent.yaml
+  - services/grafana-db.yaml
+  - services/grafana.yaml
+  - services/loki.yaml
+  - services/prometheus.yaml
+  - services/vector.yaml
+  - persistent-volume-claims/grafana-db.yaml
+  - persistent-volume-claims/grafana.yaml
+  - persistent-volume-claims/loki.yaml
+  - persistent-volume-claims/prometheus.yaml
+  - deployments/alertmanager.yaml
+  - deployments/alertmanager-ui.yaml
+  - deployments/grafana-agent.yaml
+  - deployments/grafana-db.yaml
+  - deployments/grafana.yaml
+  - deployments/loki.yaml
+  - deployments/prometheus.yaml
+  - deployments/vector.yaml
+secretGenerator:
+  - name: grafana-db-mysqld-exporter-credentials
+    literals:
+    - username=exporter
+    - password=mysqld-exporter-secret
+configMapGenerator:
+  - name: grafana-agent-config
+    files:
+      - ./app-config/grafana-agent.yaml
+  - name: grafana-config
+    files:
+      - ./app-config/grafana.ini
+  - name: grafana-datasources
+    files:
+      - ./app-config/datasource.yaml
+  - name: grafana-db-config
+    files:
+      - ./app-config/mysql-init.sql
+  - name: loki-config
+    files:
+      - ./app-config/loki.yaml
+  - name: prometheus-config
+    files:
+      - ./app-config/prometheus.yaml
+  - name: vector-config
+    files:
+      - ./app-config/vector.toml
+  - name: alertmanager-config
+    files:
+      - ./app-config/alertmanager.yml
+  - name: prometheus-alert-rules
+    files:
+      - ./app-config/alerts.yaml
+  - name: grafana-provisioned-dashboards
+    files:
+      - ./app-config/default-dashboard.yaml
+      - ./app-config/default-dashboard.json

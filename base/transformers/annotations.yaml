@@ -1,0 +1,12 @@
+apiVersion: builtin
+kind: AnnotationsTransformer
+metadata:
+  name: pod-prometheus-scrape-common
+annotations:
+  prometheus.io.service.scrape: "true"
+  prometheus.io.service.path: /metrics
+  prometheus.io.service.port: "9090"
+fieldSpecs:
+- kind: Deployment
+  path: spec/template/metadata/annotations
+  create: true

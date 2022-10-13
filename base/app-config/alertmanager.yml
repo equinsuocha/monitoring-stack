@@ -1,0 +1,8 @@
+global:
+route:
+  receiver: "void"
+  group_wait: 5s
+  group_by: ["alertname", "severity"]
+
+receivers:
+  - name: "void"

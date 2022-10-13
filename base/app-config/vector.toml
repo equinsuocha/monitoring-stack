@@ -1,0 +1,41 @@
+# Vector's API for introspection
+[api]
+    enabled = true
+    address = "0.0.0.0:8080"
+
+# Forward logs to loki
+[sinks.loki]
+    type = "loki"
+    inputs = [ "syslog_tcp", "syslog_udp" ]
+    endpoint = "http://loki:3100"
+    encoding.codec = "logfmt"
+
+    [sinks.loki.labels]
+        vector_instance = "${HOSTNAME}"
+
+[sources.syslog_tcp]
+    type = "syslog"
+    address = "0.0.0.0:6601"
+    max_length = 102_400
+    mode = "tcp"
+    path = "/var/lib/vector/syslog-tcp"
+
+[sources.syslog_udp]
+    type = "syslog"
+    address = "0.0.0.0:5514"
+    max_length = 102_400
+    mode = "udp"
+    path = "/var/lib/vector/syslog-udp"
+
+[sinks.console]
+    type = "console"
+    inputs = ["syslog_udp", "syslog_tcp"]
+    encoding.codec = "logfmt"
+
+[sources.vector_metrics]
+    type = "internal_metrics"
+
+[sinks.prometheus_endpoint]
+    type = "prometheus_exporter"
+    inputs = [ "vector_metrics" ]
+    address = "0.0.0.0:9090"

@@ -1,0 +1,18 @@
+namespace: equinsuocha
+secretGenerator:
+  - name: grafana-db-grafana-credentials
+    literals:
+    - username=grafana
+    - password=grafana-secret
+  - name: grafana-admin-credentials
+    literals:
+    - username=admin
+    - password=what$0ever
+resources:
+  - ../../base/
+configMapGenerator:
+  - name: prometheus-alert-rules
+    behavior: replace
+    files:
+      - ./app-config/alertrules.yaml
+  

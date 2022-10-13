@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vector
+spec:
+  selector:
+    matchLabels:
+      name: vector
+  template:
+    metadata:
+      labels:
+        name: "vector"
+    spec:
+      volumes:
+        - name: vector-config-volume
+          configMap:
+            name: vector-config
+        - name: logs-checkpoint
+          emptyDir: {}
+      containers:
+        - name: vector
+          image: timberio/vector:0.24.1-distroless-libc
+          ports:
+            - containerPort: 8080
+              name: vector-api
+            - containerPort: 9090
+              name: metrics
+            - containerPort: 5514
+              name: syslog-udp
+              protocol: UDP
+            - containerPort: 6601
+              name: syslog-tcp
+              protocol: TCP
+          env:
+            - name: VECTOR_SELF_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: VECTOR_WATCH_CONFIG
+              value: "/etc/vector/vector.toml"
+          volumeMounts:
+            - name: vector-config-volume
+              mountPath: /etc/vector/
+            - name: logs-checkpoint
+              mountPath: /var/lib/vector
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: '128M'
+              cpu: '0.02'
+              ephemeral-storage: "50Mi"
+            limits:
+              memory: '256M'
+              cpu: '0.5'
+              ephemeral-storage: "100Mi"
+    

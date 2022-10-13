@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager-ui
+  namespace: pipedrive
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: alertmanager-ui
+  template:
+    metadata:
+      labels:
+        app: alertmanager-ui
+    spec:
+      containers:
+        - name: alertmanager-ui
+          image: ghcr.io/prymitive/karma:latest
+          ports:
+            - containerPort: 8080
+              name: alertmgr-ui
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          env:
+            - name: ALERTMANAGER_PROXY
+              value: "true"
+            - name: ALERTMANAGER_URI
+              value: http://alertmanager:9093
+          resources:
+            requests:
+              cpu: '0.1'
+              memory: 128M
+            limits:
+              cpu: '1'
+              memory: 512M
