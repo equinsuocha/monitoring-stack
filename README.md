@@ -6,7 +6,7 @@
 
 ### Okteto deployment guide
 
-1. Register an account in okteto.com
+1. Register an account in www.okteto.com
 2. Install `okteto-cli`: https://www.okteto.com/docs/getting-started/#installing-okteto-cli
 3. Configure `okteto-cli`: https://www.okteto.com/docs/getting-started/#configuring-okteto-cli-with-okteto-cloud
 4. Get okteto kubeconfig: https://www.okteto.com/docs/getting-started/#configuring-okteto-cli-with-okteto-cloud
