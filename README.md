@@ -15,8 +15,8 @@
 
 Once deployment is done, public components will be available
 under following urls:
-- https://alertmanager-ui-{{ your namespace name }}.cloud.okteto.net/
-- https://grafana-{{ your namespace name }}.cloud.okteto.net/
+- `https://alertmanager-ui-{{ your namespace name }}.cloud.okteto.net/`
+- `https://grafana-{{ your namespace name }}.cloud.okteto.net/`
 
 ### Private cluster deployment guide
 
